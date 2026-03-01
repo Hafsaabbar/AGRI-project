@@ -1,0 +1,8 @@
+# Oracle Wallet
+wallet/
+*.pem
+*.key
+*.p12
+*.jks
+*.sso
+*.ora

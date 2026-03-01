@@ -1,0 +1,11 @@
+# Node
+node_modules/
+build/
+dist/
+
+# Env files
+.env
+.env.local
+.env.*.local
+
+.bat
