@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGRI - Tableau de Bord Directeur</title>
+    <meta name="description" content="Interface de gestion pour le directeur de la société AGRI Maroc">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Chargement...</p>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>AGRI</h1>
+                        <span>Direction Générale</span>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Tableau de bord</div>
+                    <a href="#" class="nav-item active" data-page="dashboard">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Vue d'ensemble</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Gestion</div>
+                    <a href="#" class="nav-item" data-page="catalogue">
+                        <i class="fas fa-boxes-stacked"></i>
+                        <span>Catalogue</span>
+                        <span class="nav-badge" id="catalogueBadge">3000</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="agences">
+                        <i class="fas fa-building"></i>
+                        <span>Agences</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="clients">
+                        <i class="fas fa-users"></i>
+                        <span>Clients</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Comptabilité</div>
+                    <a href="#" class="nav-item" data-page="factures">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <span>Factures</span>
+                        <span class="nav-badge" id="facturesBadge">0</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="journal">
+                        <i class="fas fa-book"></i>
+                        <span>Journal des Ventes</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Rapports</div>
+                    <a href="#" class="nav-item" data-page="rapports">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Statistiques</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar" id="userAvatar">DG</div>
+                    <div class="user-info">
+                        <h4 id="userName">Directeur Général</h4>
+                        <span>Administrateur</span>
+                    </div>
+                    <button class="btn-logout" onclick="logout()" title="Déconnexion">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="btn-icon" id="menuToggle" style="display:none;">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="page-title">
+                        <h2 id="pageTitle">Tableau de Bord</h2>
+                        <p id="pageSubtitle">Vue d'ensemble de l'activité</p>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="header-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Rechercher..." id="globalSearch">
+                    </div>
+                    <div class="header-actions">
+                        <button class="header-btn" onclick="refreshData()" title="Actualiser">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button class="header-btn" title="Notifications">
+                            <i class="fas fa-bell"></i>
+                            <span class="badge"></span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="page-content">
+                <!-- Dashboard Page -->
+                <div class="section-page active" id="page-dashboard">
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon green">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="statClients">0</h3>
+                                <p>Clients totaux</p>
+                                <div class="stat-change positive">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span id="statClientsChange">+0% ce mois</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon blue">
+                                <i class="fas fa-boxes-stacked"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="statProduits">0</h3>
+                                <p>Produits au catalogue</p>
+                                <div class="stat-change positive">
+                                    <i class="fas fa-check"></i>
+                                    <span>Actifs</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon orange">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="statCommandes">0</h3>
+                                <p>Commandes ce mois</p>
+                                <div class="stat-change positive">
+                                    <i class="fas fa-coins"></i>
+                                    <span id="statCA">0 MAD</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon purple">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="statAgences">0</h3>
+                                <p>Agences actives</p>
+                                <div class="stat-change positive">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>Casablanca</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row -->
+                    <div class="content-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-chart-line"></i> Évolution des Ventes</h3>
+                                <select class="form-control" style="width:auto;" id="chartPeriod">
+                                    <option value="12">12 derniers mois</option>
+                                    <option value="6">6 derniers mois</option>
+                                    <option value="3">3 derniers mois</option>
+                                </select>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="salesChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-trophy"></i> Top Produits</h3>
+                            </div>
+                            <div class="card-body">
+                                <div id="topProductsList"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Orders -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-clock"></i> Dernières Commandes</h3>
+                            <a href="#" class="btn btn-secondary btn-sm" data-page="commandes">
+                                Voir tout <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                        <div class="card-body" style="padding:0;">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>N° Commande</th>
+                                        <th>Client</th>
+                                        <th>Type</th>
+                                        <th>Montant</th>
+                                        <th>Statut</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentOrdersTable">
+                                    <tr>
+                                        <td colspan="6" class="text-center">Chargement...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Catalogue Page -->
+                <div class="section-page" id="page-catalogue">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-boxes-stacked"></i> Gestion du Catalogue</h3>
+                            <div style="display:flex; gap:12px;">
+                                <button class="btn btn-secondary btn-sm" onclick="openPriceUpdateModal()">
+                                    <i class="fas fa-tags"></i> Mise à jour des prix
+                                </button>
+                                <button class="btn btn-primary btn-sm" onclick="openProductModal()">
+                                    <i class="fas fa-plus"></i> Nouveau produit
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div style="display:flex; gap:16px; margin-bottom:20px;">
+                                <input type="text" class="form-control" placeholder="Rechercher un produit..."
+                                    id="searchProduct" style="max-width:300px;">
+                                <select class="form-control" id="filterCategory" style="max-width:200px;">
+                                    <option value="">Toutes catégories</option>
+                                </select>
+                            </div>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Code</th>
+                                        <th>Produit</th>
+                                        <th>Catégorie</th>
+                                        <th>Prix (MAD)</th>
+                                        <th>Stock</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="catalogueTable">
+                                </tbody>
+                            </table>
+                            <div class="pagination" id="cataloguePagination"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agences Page -->
+                <div class="section-page" id="page-agences">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-building"></i> Gestion des Agences</h3>
+                            <button class="btn btn-primary btn-sm" onclick="openAgenceModal()">
+                                <i class="fas fa-plus"></i> Nouvelle agence
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="stats-grid" id="agencesCards">
+                            </div>
+                            <table class="data-table" style="margin-top:20px;">
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Ville</th>
+                                        <th>Région</th>
+                                        <th>Téléphone</th>
+                                        <th>Responsable</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="agencesTable">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Clients Page -->
+                <div class="section-page" id="page-clients">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-users"></i> Supervision des Clients</h3>
+                            <button class="btn btn-secondary btn-sm" onclick="exportClients()">
+                                <i class="fas fa-download"></i> Exporter
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <!-- Client Stats -->
+                            <div class="stats-grid" style="margin-bottom:24px;" id="clientsStatsGrid">
+                            </div>
+
+                            <div style="display:flex; gap:16px; margin-bottom:20px;">
+                                <input type="text" class="form-control" placeholder="Rechercher un client..."
+                                    id="searchClient" style="max-width:300px;">
+                                <select class="form-control" id="filterClientType" style="max-width:200px;">
+                                    <option value="">Tous les types</option>
+                                    <option value="PARTICULIER">Particuliers</option>
+                                    <option value="PROFESSIONNEL">Professionnels (Détaillants)</option>
+                                    <option value="AGRICULTEUR">Agriculteurs</option>
+                                </select>
+                                <select class="form-control" id="filterClientStatus" style="max-width:180px;">
+                                    <option value="">Tous les statuts</option>
+                                    <option value="APPROVED">Approuvés</option>
+                                    <option value="PENDING">En attente</option>
+                                    <option value="SUSPENDED">Suspendus</option>
+                                </select>
+                            </div>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Email</th>
+                                        <th>Type</th>
+                                        <th>Ville</th>
+                                        <th>Remise</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="clientsTable">
+                                </tbody>
+                            </table>
+                            <div class="pagination" id="clientsPagination"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Factures Page -->
+                <div class="section-page" id="page-factures">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-file-invoice-dollar"></i> Factures Mensuelles</h3>
+                            <div style="display:flex; gap:12px;">
+                                <button class="btn btn-secondary btn-sm" onclick="generateMonthlyInvoices()">
+                                    <i class="fas fa-magic"></i> Générer factures du mois
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <!-- Invoice Stats -->
+                            <div class="stats-grid" style="margin-bottom:24px;" id="facturesStatsGrid">
+                            </div>
+
+                            <div style="display:flex; gap:16px; margin-bottom:20px;">
+                                <select class="form-control" id="filterFactureMonth" style="max-width:150px;">
+                                    <option value="">Tous les mois</option>
+                                    <option value="1">Janvier</option>
+                                    <option value="2">Février</option>
+                                    <option value="3">Mars</option>
+                                    <option value="4">Avril</option>
+                                    <option value="5">Mai</option>
+                                    <option value="6">Juin</option>
+                                    <option value="7">Juillet</option>
+                                    <option value="8">Août</option>
+                                    <option value="9">Septembre</option>
+                                    <option value="10">Octobre</option>
+                                    <option value="11">Novembre</option>
+                                    <option value="12">Décembre</option>
+                                </select>
+                                <select class="form-control" id="filterFactureYear" style="max-width:120px;">
+                                    <option value="">Toutes années</option>
+                                    <option value="2026" selected>2026</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2024">2024</option>
+                                </select>
+                                <select class="form-control" id="filterFactureStatus" style="max-width:180px;">
+                                    <option value="">Tous les statuts</option>
+                                    <option value="PENDING">En attente</option>
+                                    <option value="PAID">Payées</option>
+                                    <option value="OVERDUE">En retard</option>
+                                </select>
+                            </div>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>N° Facture</th>
+                                        <th>Client</th>
+                                        <th>Période</th>
+                                        <th>Total HT</th>
+                                        <th>TVA</th>
+                                        <th>Total TTC</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="facturesTable">
+                                </tbody>
+                            </table>
+                            <div class="pagination" id="facturesPagination"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Journal des Ventes Page -->
+                <div class="section-page" id="page-journal">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-book"></i> Journal des Ventes</h3>
+                            <div style="display:flex; gap:12px;">
+                                <button class="btn btn-secondary btn-sm" onclick="exportJournal()">
+                                    <i class="fas fa-file-csv"></i> Exporter CSV
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <!-- Journal Stats -->
+                            <div class="stats-grid" style="margin-bottom:24px;" id="journalStatsGrid">
+                            </div>
+
+                            <div style="display:flex; gap:16px; margin-bottom:20px;">
+                                <input type="date" class="form-control" id="journalStartDate" style="max-width:180px;">
+                                <input type="date" class="form-control" id="journalEndDate" style="max-width:180px;">
+                                <button class="btn btn-primary btn-sm" onclick="filterJournal()">
+                                    <i class="fas fa-filter"></i> Filtrer
+                                </button>
+                            </div>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>N° Pièce</th>
+                                        <th>Date</th>
+                                        <th>Libellé</th>
+                                        <th>Débit</th>
+                                        <th>Crédit</th>
+                                        <th>Montant TTC</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="journalTable">
+                                </tbody>
+                            </table>
+                            <div class="card-footer" style="display:flex; justify-content:space-between;">
+                                <div>
+                                    <strong>Total période :</strong>
+                                    <span id="journalTotalHT">0.00 MAD</span> HT |
+                                    <span id="journalTotalTVA">0.00 MAD</span> TVA |
+                                    <span id="journalTotalTTC">0.00 MAD</span> TTC
+                                </div>
+                                <div class="pagination" id="journalPagination"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rapports Page -->
+                <div class="section-page" id="page-rapports">
+                    <div class="content-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-chart-bar"></i> Répartition des Clients</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="clientsChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-birthday-cake"></i> Anniversaires à venir</h3>
+                            </div>
+                            <div class="card-body">
+                                <p style="color:var(--text-secondary);margin-bottom:16px;">
+                                    <i class="fas fa-lightbulb"></i> Clients ayant leur anniversaire dans les 30
+                                    prochains jours
+                                </p>
+                                <div id="birthdaysList"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-map-marked-alt"></i> Répartition par Ville</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="citiesChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <!-- Product Modal -->
+    <div class="modal-overlay" id="productModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="productModalTitle">Nouveau Produit</h3>
+                <button class="modal-close" onclick="closeModal('productModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="productForm">
+                    <input type="hidden" id="productId">
+                    <div class="form-group">
+                        <label>Code produit</label>
+                        <input type="text" class="form-control" id="productCode" placeholder="Généré automatiquement">
+                    </div>
+                    <div class="form-group">
+                        <label>Nom du produit *</label>
+                        <input type="text" class="form-control" id="productName" required
+                            placeholder="Ex: Huile d'olive extra vierge">
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea class="form-control" id="productDescription" rows="3"
+                            placeholder="Description du produit..."></textarea>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                        <div class="form-group">
+                            <label>Catégorie *</label>
+                            <select class="form-control" id="productCategory" required>
+                                <option value="">Sélectionner...</option>
+                                <option value="HUILES">Huiles</option>
+                                <option value="CEREALES">Céréales</option>
+                                <option value="FRUITS">Fruits</option>
+                                <option value="LEGUMES">Légumes</option>
+                                <option value="EPICES">Épices</option>
+                                <option value="DATTES">Dattes</option>
+                                <option value="MIEL">Miel</option>
+                                <option value="ARGAN">Argan</option>
+                                <option value="OLIVES">Olives</option>
+                                <option value="AUTRES">Autres</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Unité</label>
+                            <select class="form-control" id="productUnit">
+                                <option value="KG">Kilogramme (KG)</option>
+                                <option value="L">Litre (L)</option>
+                                <option value="UNITE">Unité</option>
+                                <option value="CAISSE">Caisse</option>
+                                <option value="SEAU">Seau</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+                        <div class="form-group">
+                            <label>Prix unitaire (MAD) *</label>
+                            <input type="number" class="form-control" id="productPrice" step="0.01" min="0" required
+                                placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label>Stock disponible</label>
+                            <input type="number" class="form-control" id="productStock" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Stock minimum</label>
+                            <input type="number" class="form-control" id="productMinStock" min="0" value="10">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('productModal')">Annuler</button>
+                <button class="btn btn-primary" onclick="saveProduct()">
+                    <i class="fas fa-save"></i> Enregistrer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Agence Modal -->
+    <div class="modal-overlay" id="agenceModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="agenceModalTitle">Nouvelle Agence</h3>
+                <button class="modal-close" onclick="closeModal('agenceModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="agenceForm">
+                    <input type="hidden" id="agenceId">
+                    <div class="form-group">
+                        <label>Nom de l'agence *</label>
+                        <input type="text" class="form-control" id="agenceNom" required
+                            placeholder="Ex: Agence Ain Sebaa">
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                        <div class="form-group">
+                            <label>Ville *</label>
+                            <input type="text" class="form-control" id="agenceVille" required value="Casablanca">
+                        </div>
+                        <div class="form-group">
+                            <label>Région</label>
+                            <input type="text" class="form-control" id="agenceRegion" value="Casablanca-Settat">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Adresse</label>
+                        <input type="text" class="form-control" id="agenceAdresse" placeholder="Adresse complète">
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                        <div class="form-group">
+                            <label>Téléphone</label>
+                            <input type="tel" class="form-control" id="agenceTelephone" placeholder="0522-XXX-XXX">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" class="form-control" id="agenceEmail" placeholder="agence@agri.ma">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Statut</label>
+                        <select class="form-control" id="agenceStatut">
+                            <option value="ACTIF">Actif</option>
+                            <option value="INACTIF">Inactif</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('agenceModal')">Annuler</button>
+                <button class="btn btn-primary" onclick="saveAgence()">
+                    <i class="fas fa-save"></i> Enregistrer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Client Detail Modal -->
+    <div class="modal-overlay" id="clientModal">
+        <div class="modal" style="max-width:700px;">
+            <div class="modal-header">
+                <h3>Détails du Client</h3>
+                <button class="modal-close" onclick="closeModal('clientModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="clientModalContent">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('clientModal')">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Facture Detail Modal -->
+    <div class="modal-overlay" id="factureModal">
+        <div class="modal" style="max-width:700px;">
+            <div class="modal-header">
+                <h3>Détails de la Facture</h3>
+                <button class="modal-close" onclick="closeModal('factureModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="factureModalContent">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('factureModal')">Fermer</button>
+                <button class="btn btn-primary" id="btnMarkPaid" onclick="markFacturePaid()">
+                    <i class="fas fa-check"></i> Marquer comme payée
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Price Update Modal -->
+    <div class="modal-overlay" id="priceUpdateModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Mise à jour des prix du catalogue</h3>
+                <button class="modal-close" onclick="closeModal('priceUpdateModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p style="color:var(--text-secondary); margin-bottom:20px;">
+                    <i class="fas fa-info-circle"></i> Cette action permet de mettre à jour les prix de plusieurs
+                    produits en même temps (mise à jour semestrielle).
+                </p>
+                <div class="form-group">
+                    <label>Version du catalogue</label>
+                    <input type="text" class="form-control" id="catalogueVersion" placeholder="Ex: V2025-01">
+                </div>
+                <div class="form-group">
+                    <label>Pourcentage d'augmentation/réduction</label>
+                    <input type="number" class="form-control" id="pricePercentage" placeholder="Ex: 5 pour +5%"
+                        step="0.1">
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea class="form-control" id="priceUpdateNotes" rows="2"
+                        placeholder="Notes sur cette mise à jour..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('priceUpdateModal')">Annuler</button>
+                <button class="btn btn-primary" onclick="applyPriceUpdate()">
+                    <i class="fas fa-tags"></i> Appliquer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>

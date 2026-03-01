@@ -1,0 +1,13 @@
+{
+    "name": "agri-director-root",
+    "version": "1.0.0",
+    "description": "Root package for AGRI Director",
+    "scripts": {
+        "start": "cd backend && npm start",
+        "dev": "cd backend && npm run dev",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC"
+}
