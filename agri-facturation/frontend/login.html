@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGRI Facturation - Connexion</title>
+    <meta name="description" content="Interface Agent de Facturation AGRI - Gestion des factures, clients et bons de livraison">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <div class="login-header-logo">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <h1>AGRI</h1>
+                <p>Service Facturation</p>
+            </div>
+            <div class="login-body">
+                <div class="login-error" id="loginError"></div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label">Adresse email</label>
+                        <input type="email" class="form-control" id="email" placeholder="agent@agri.ma" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mot de passe</label>
+                        <input type="password" class="form-control" id="password" placeholder="Votre mot de passe" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i> Se connecter
+                    </button>
+                </form>
+            </div>
+            <div class="login-footer">
+                <p>AGRI - Societe de Vente de Produits Agricoles</p>
+                <p>Casablanca, Maroc</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const errorDiv = document.getElementById('loginError');
+
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connexion...';
+            errorDiv.classList.remove('show');
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    localStorage.setItem('agri_facturation_user', JSON.stringify(data.user));
+                    window.location.href = '/index.html';
+                } else {
+                    errorDiv.textContent = data.error || 'Identifiants invalides';
+                    errorDiv.classList.add('show');
+                }
+            } catch (err) {
+                errorDiv.textContent = 'Erreur de connexion au serveur';
+                errorDiv.classList.add('show');
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Se connecter';
+            }
+        });
+
+        // Redirect if already logged in
+        if (localStorage.getItem('agri_facturation_user')) {
+            window.location.href = '/index.html';
+        }
+    </script>
+</body>
+
+</html>

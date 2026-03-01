@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGRI Facturation - Dashboard</title>
+    <meta name="description" content="Interface Agent de Facturation AGRI">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>AGRI</h1>
+                        <span>Facturation</span>
+                    </div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Principal</div>
+                    <a class="nav-item active" data-page="dashboard">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Tableau de bord</span>
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Gestion Clients</div>
+                    <a class="nav-item" data-page="clients">
+                        <i class="fas fa-address-card"></i>
+                        <span>Fiches clients</span>
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Documents</div>
+                    <a class="nav-item" data-page="commandes">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span>Bons de commande</span>
+                    </a>
+                    <a class="nav-item" data-page="livraisons">
+                        <i class="fas fa-truck"></i>
+                        <span>Bons de livraison</span>
+                    </a>
+                    <a class="nav-item" data-page="factures">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <span>Facturation</span>
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Reference</div>
+                    <a class="nav-item" data-page="catalogue">
+                        <i class="fas fa-box"></i>
+                        <span>Catalogue</span>
+                    </a>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar" id="userAvatar">A</div>
+                    <div class="user-info">
+                        <h4 id="userName">Agent</h4>
+                        <span>Agent Facturation</span>
+                    </div>
+                    <button class="btn-logout" onclick="logout()" title="Déconnexion">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="main-header">
+                <div class="header-left">
+                    <div class="page-title">
+                        <h2 id="pageTitle">Tableau de bord</h2>
+                        <p id="pageSubtitle">Vue d'ensemble du service facturation</p>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="header-actions">
+                        <button class="header-btn" onclick="refreshData()" title="Actualiser">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="page-content" id="contentArea"></div>
+        </main>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Titre</h3>
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer" id="modalFooter">
+                <button class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+                <button class="btn btn-primary" id="modalConfirmBtn">Confirmer</button>
+            </div>
+        </div>
+    </div>
+    <script src="js/app.js"></script>
+</body>
+
+</html>

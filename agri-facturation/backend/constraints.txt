@@ -1,0 +1,9 @@
+CONSTRAINTS OF ORDER_INVOICES:
+[SYS_C0028770] Type: R, Condition: null
+[SYS_C0028771] Type: R, Condition: null
+[SYS_C0028764] Type: C, Condition: "ID" IS NOT NULL
+[SYS_C0028765] Type: C, Condition: "INVOICE_NUMBER" IS NOT NULL
+[SYS_C0028766] Type: C, Condition: "ORDER_ID" IS NOT NULL
+[SYS_C0028767] Type: C, Condition: "CLIENT_ID" IS NOT NULL
+[SYS_C0028768] Type: P, Condition: null
+[SYS_C0028769] Type: U, Condition: null
