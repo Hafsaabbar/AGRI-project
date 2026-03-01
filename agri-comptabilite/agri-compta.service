@@ -1,0 +1,16 @@
+[Unit]
+Description=AGRI Comptabilite Backend
+After=network.target
+
+[Service]
+Type=simple
+User=opc
+WorkingDirectory=/home/opc/agri-comptabilite/backend
+ExecStart=/usr/bin/node server.js
+Restart=always
+RestartSec=10
+Environment=NODE_ENV=production
+# Add any environment variables if needed, OR verify PATH if node is not in /usr/bin
+
+[Install]
+WantedBy=multi-user.target

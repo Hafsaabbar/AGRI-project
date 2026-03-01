@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGRI Comptabilité - Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <div class="sidebar-logo-icon"><i class="fas fa-leaf" style="color: #2E7D32;"></i></div>
+                    <div>
+                        <div class="sidebar-logo-text">AGRI</div>
+                        <div class="sidebar-logo-subtitle">Comptabilité</div>
+                    </div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Principal</div>
+                    <a class="nav-item active" data-page="dashboard"><i class="fas fa-chart-pie"></i><span>Tableau de
+                            bord</span></a>
+                    <a class="nav-item" data-page="factures"><i
+                            class="fas fa-file-invoice-dollar"></i><span>Factures</span></a>
+                    <a class="nav-item" data-page="journal"><i class="fas fa-book"></i><span>Journal des
+                            ventes</span></a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Consultation</div>
+                    <a class="nav-item" data-page="livraisons"><i class="fas fa-truck"></i><span>Bons de
+                            livraison</span></a>
+                    <a class="nav-item" data-page="clients"><i class="fas fa-users"></i><span>Clients</span></a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Outils</div>
+                    <a class="nav-item" data-page="rapports"><i class="fas fa-chart-bar"></i><span>Rapports</span></a>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">C</div>
+                    <div>
+                        <div class="user-name" id="userName">Comptable</div>
+                        <div class="user-role">Agent Comptabilité</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <main class="main-content">
+            <header class="topbar">
+                <div class="topbar-title">
+                    <h1 id="pageTitle">Tableau de bord</h1>
+                    <p id="pageSubtitle">Vue d'ensemble</p>
+                </div>
+                <div class="topbar-actions">
+                    <button class="btn btn-secondary" onclick="refreshData()"><i class="fas fa-sync-alt"></i>
+                        Actualiser</button>
+                    <button class="btn btn-danger" onclick="logout()"><i class="fas fa-sign-out-alt"></i>
+                        Déconnexion</button>
+                </div>
+            </header>
+            <div class="content-area" id="contentArea"></div>
+        </main>
+    </div>
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Titre</h3><button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer" id="modalFooter">
+                <button class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+                <button class="btn btn-primary" id="modalConfirmBtn">Confirmer</button>
+            </div>
+        </div>
+    </div>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
