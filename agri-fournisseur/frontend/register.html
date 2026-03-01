@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - AGRI Fournisseur</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <div class="auth-logo-icon"><i class="fas fa-seedling"></i></div>
+                <h1>AGRI Fournisseur</h1>
+                <p>Créer votre compte fournisseur</p>
+            </div>
+
+            <div id="alertContainer"></div>
+
+            <form id="registerForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="nom">Nom *</label>
+                        <input type="text" id="nom" name="nom" class="form-control" placeholder="Bennani" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="prenom">Prénom</label>
+                        <input type="text" id="prenom" name="prenom" class="form-control" placeholder="Mohammed">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="email">Adresse email *</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="contact@entreprise.ma"
+                        required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="password">Mot de passe *</label>
+                        <input type="password" id="password" name="password" class="form-control" placeholder="••••••••"
+                            required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="password_confirm">Confirmer *</label>
+                        <input type="password" id="password_confirm" name="password_confirm" class="form-control"
+                            placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="type_fournisseur">Type de fournisseur</label>
+                    <select id="type_fournisseur" name="type_fournisseur" class="form-control form-select">
+                        <option value="agriculteur">Agriculteur</option>
+                        <option value="cooperative">Coopérative</option>
+                        <option value="entreprise">Entreprise</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="telephone">Téléphone</label>
+                        <input type="tel" id="telephone" name="telephone" class="form-control"
+                            placeholder="0522-123456">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="ville">Ville</label>
+                        <input type="text" id="ville" name="ville" class="form-control" placeholder="Casablanca">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="adresse">Adresse</label>
+                    <input type="text" id="adresse" name="adresse" class="form-control" placeholder="Adresse complète">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;" id="registerBtn">
+                    <span>Créer mon compte</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Déjà inscrit ? <a href="index.html">Se connecter</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '';
+
+        function showAlert(message, type = 'error') {
+            const container = document.getElementById('alertContainer');
+            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            if (type === 'error') setTimeout(() => container.innerHTML = '', 5000);
+        }
+
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('registerBtn');
+            btn.innerHTML = '<span>Création...</span>';
+            btn.disabled = true;
+
+            const password = document.getElementById('password').value;
+            if (password !== document.getElementById('password_confirm').value) {
+                showAlert('Les mots de passe ne correspondent pas');
+                btn.innerHTML = '<span>Créer mon compte</span><i class="fas fa-arrow-right"></i>';
+                btn.disabled = false;
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: document.getElementById('email').value,
+                        password: password,
+                        nom: document.getElementById('nom').value,
+                        prenom: document.getElementById('prenom').value,
+                        type_fournisseur: document.getElementById('type_fournisseur').value,
+                        telephone: document.getElementById('telephone').value,
+                        adresse: document.getElementById('adresse').value
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert('Compte créé avec succès !', 'success');
+                    setTimeout(() => window.location.href = 'index.html', 2000);
+                } else {
+                    showAlert(data.error || 'Erreur lors de la création du compte');
+                }
+            } catch (err) {
+                showAlert('Erreur de connexion au serveur');
+            } finally {
+                btn.innerHTML = '<span>Créer mon compte</span><i class="fas fa-arrow-right"></i>';
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>
